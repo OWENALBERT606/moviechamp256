@@ -20,7 +20,7 @@ export function Header() {
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center space-x-6">
-              <Link href="#" className="text-foreground hover:text-primary transition-colors">
+              <Link href="/" className="text-foreground hover:text-primary transition-colors">
                 Home
               </Link>
               <Link href="/movies" className="text-muted-foreground hover:text-primary transition-colors">
@@ -29,13 +29,13 @@ export function Header() {
               <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
                 Series
               </Link>
-              <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
+              <Link href="/documentaries" className="text-muted-foreground hover:text-primary transition-colors">
                 Documentaries
               </Link>
-              <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
+              <Link href="/list" className="text-muted-foreground hover:text-primary transition-colors">
                 My List
               </Link>
-              <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
+              <Link href="/shows" className="text-muted-foreground hover:text-primary transition-colors">
                 TV Shows
               </Link>
             </nav>
