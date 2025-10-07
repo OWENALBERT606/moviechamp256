@@ -8,8 +8,8 @@ import Image from "next/image"
 import { useState } from "react"
 import Link from "next/link"
 
-export default function SeriesDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params)
+export default async function SeriesDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const series = seriesData.find((s) => s.id === Number.parseInt(id))
   const [selectedEpisode, setSelectedEpisode] = useState(series?.episodesList[0])
   const [isPlaying, setIsPlaying] = useState(false)

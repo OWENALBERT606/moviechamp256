@@ -8,8 +8,8 @@ import { useState } from "react"
 import Link from "next/link"
 import { documentariesData } from "@/lib/documentary-data"
 
-export default function DocumentaryDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params)
+export default async function DocumentaryDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const documentary = documentariesData.find((d) => d.id === Number.parseInt(id))
   const [isPlaying, setIsPlaying] = useState(false)
 

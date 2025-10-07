@@ -5,8 +5,9 @@ import { RelatedMovies } from "@/components/front-end/related-movies"
 import { moviesData } from "@/lib/movies-data"
 import { notFound } from "next/navigation"
 
-export default function MovieDetailPage({ params }: { params: { id: string } }) {
-  const movie = moviesData.find((m) => m.id.toString() === params.id)
+export default async function MovieDetailPage({ params }: {  params: Promise<{ id: string }>; }) {
+  const {id} =await params
+  const movie = moviesData.find((m) => m.id.toString() === id)
 
   if (!movie) {
     notFound()

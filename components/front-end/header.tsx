@@ -57,9 +57,9 @@ export function Header() {
             </Button>
 
             {/* Profile */}
-            <Button variant="ghost" size="icon" className="hidden md:flex">
-              <User className="w-5 h-5" />
-            </Button>
+            <Link href="/login" className="text-muted-foreground hover:text-primary transition-colors">
+                Login
+              </Link>
 
             {/* Mobile Menu Button */}
             <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
