@@ -49,7 +49,7 @@ export default function MoviesPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <main className="pt-24 px-4 md:px-8 lg:px-12 pb-12">
+      <main className="pt-24 px-2 md:px-8 lg:px-12 pb-12">
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-foreground mb-2">Movies</h1>
           <p className="text-muted-foreground">Discover our collection of {moviesData.length} premium movies</p>
