@@ -16,10 +16,10 @@ export default async function MovieDetailPage({ params }: {  params: Promise<{ i
   const relatedMovies = moviesData.filter((m) => m.genre === movie.genre && m.id !== movie.id).slice(0, 6)
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen px-2 bg-background">
       <main className="pt-20">
         <MoviePlayer movie={movie} />
-        <div className="px-4 md:px-8 lg:px-12 py-12">
+        <div className="md:px-8 lg:px-12 py-12">
           <MovieInfo movie={movie} />
           <RelatedMovies movies={relatedMovies} />
         </div>
