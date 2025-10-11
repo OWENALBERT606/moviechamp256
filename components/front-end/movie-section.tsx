@@ -113,6 +113,7 @@
 import { useState } from "react"
 import { ArrowBigDown, ChevronLeft, ChevronRight, Play, Plus, Star } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 interface Movie {
   id: number
@@ -150,7 +151,7 @@ export function MovieSection({ title, movies }: MovieSectionProps) {
         <h2 className="text-2xl font-bold text-foreground">{title}</h2>
         <div className="flex items-center space-x-2">
           <Button variant="ghost" size="icon" onClick={() => scroll("left")} className="hover:bg-secondary">
-            <ChevronLeft className="w-5 h-5" />
+            <ChevronLeft className="w-5 h-5"/>
           </Button>
           <Button variant="ghost" size="icon" onClick={() => scroll("right")} className="hover:bg-secondary">
             <ChevronRight className="w-5 h-5" />
@@ -160,7 +161,7 @@ export function MovieSection({ title, movies }: MovieSectionProps) {
 
       <div
         id={`scroll-${title.replace(/\s+/g, "-")}`}
-        className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4 overflow-x-auto scrollbar-hide pb-4"
+        className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 overflow-x-auto scrollbar-hide pb-4"
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
         {movies.map((movie) => (
@@ -186,9 +187,11 @@ export function MovieSection({ title, movies }: MovieSectionProps) {
                 <div className="absolute bottom-0 left-0 right-0 p-4 space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
-                      <Button size="sm" className="bg-primary hover:bg-primary/90 golden-glow">
-                        <Play className="w-4 h-4" />
-                      </Button>
+                      <Link href={`/movie/${movie.id}`}>
+                        <Button size="sm" className="bg-primary hover:bg-primary/90 golden-glow">
+                          <Play className="w-4 h-4" />
+                        </Button>
+                      </Link>
                       <Button
                         title="add to my list"
                         size="sm"
