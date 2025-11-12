@@ -1,4 +1,5 @@
-import React from 'react'
+"use client"
+import React, { useTransition } from 'react'
 import { Input } from "@/components/ui/input";
 import {
   AudioWaveform,
@@ -170,10 +171,21 @@ import {
   SidebarMenuItem,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { useRouter } from 'next/navigation';
+import { logoutUser } from '@/actions/auth';
 
 
-export default function DashboardNav() {
+export default function DashboardNav({user}:{user:any}) {
     const [searchQuery, setSearchQuery] = React.useState("");
+     const [isLoggingOut, startTransition] = useTransition();
+  const router = useRouter();
+
+      const handleLogout = () => {
+    startTransition(async () => {
+      await logoutUser();          // clears HttpOnly cookies on the server
+      router.replace("/");    // send user to login
+    });
+  };
   return (
     <div className="flex h-16 items-center gap-4 border-b px-4">
               <SidebarTrigger />
@@ -201,16 +213,16 @@ export default function DashboardNav() {
                                   <Avatar className="h-8 w-8 rounded-lg">
                                     <AvatarImage
                                       src={data.user.avatar}
-                                      alt={data.user.name}
+                                      alt={user.name}
                                     />
                                     <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                                   </Avatar>
                                   <div className="grid flex-1 text-left text-sm leading-tight">
                                     <span className="truncate font-semibold">
-                                      {data.user.name}
+                                      {user.name}
                                     </span>
                                     <span className="truncate text-xs">
-                                      {data.user.email}
+                                      {user.email}
                                     </span>
                                   </div>
                                   <ChevronsUpDown className="ml-auto size-4" />
@@ -266,10 +278,16 @@ export default function DashboardNav() {
                                   </DropdownMenuItem>
                                 </DropdownMenuGroup>
                                 <DropdownMenuSeparator />
-                                <DropdownMenuItem>
-                                  <LogOut />
-                                  Log out
-                                </DropdownMenuItem>
+                               <DropdownMenuItem
+                              onSelect={(e) => {
+                              e.preventDefault(); // prevent menu default behavior
+                              if (!isLoggingOut) handleLogout();
+                          }}
+                            disabled={isLoggingOut}
+                >
+                  <LogOut />
+                  {isLoggingOut ? "Logging out..." : "Log out"}
+                </DropdownMenuItem>
                               </DropdownMenuContent>
                             </DropdownMenu>
                           </SidebarMenuItem>
