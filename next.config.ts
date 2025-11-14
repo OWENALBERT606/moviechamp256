@@ -33,6 +33,11 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "**",
+      }, {
+        protocol: 'https',
+        hostname: '*.ufs.sh', // This allows all ufs.sh subdomains
+        port: '',
+        pathname: '/**',
       },
     ],
   },
