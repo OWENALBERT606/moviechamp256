@@ -16,33 +16,31 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Trash2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { deleteVJ, type VJ } from "@/actions/vjs";
+import { deleteMovie, type Movie } from "@/actions/movies";
 
-interface DeleteVJButtonProps {
-  vj: VJ;
+interface DeleteMovieButtonProps {
+  movie: Movie;
   variant?: "ghost" | "outline" | "destructive";
 }
 
-export function DeleteVJButton({ vj, variant = "ghost" }: DeleteVJButtonProps) {
+export function DeleteMovieButton({ movie, variant = "ghost" }: DeleteMovieButtonProps) {
   const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-
-  const hasMovies = vj._count?.movies && vj._count.movies > 0;
 
   const handleDelete = async () => {
     setIsDeleting(true);
 
     try {
-      const result = await deleteVJ(vj.id);
+      const result = await deleteMovie(movie.id);
 
       if (result.success) {
-        toast.success("VJ deleted successfully!");
-        router.push("/dashboard/vjs");
+        toast.success("Movie deleted successfully!");
+        router.push("/dashboard/movies");
         router.refresh();
         setIsOpen(false);
       } else {
-        toast.error(result.error || "Failed to delete VJ");
+        toast.error(result.error || "Failed to delete movie");
       }
     } catch (error) {
       console.error("Delete error:", error);
@@ -55,25 +53,16 @@ export function DeleteVJButton({ vj, variant = "ghost" }: DeleteVJButtonProps) {
   return (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
       <AlertDialogTrigger asChild>
-        <Button
-          variant={variant}
-          size="sm"
-          // disabled={hasMovies}
-          title={hasMovies ? "Cannot delete VJ with movies" : "Delete VJ"}
-        >
+        <Button variant={variant} size="sm" title="Delete movie">
           <Trash2 className="h-4 w-4 text-destructive" />
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Delete VJ</AlertDialogTitle>
+          <AlertDialogTitle>Delete Movie</AlertDialogTitle>
           <AlertDialogDescription>
-            Are you sure you want to delete <strong>{vj.name}</strong>? This action cannot be undone.
-            {hasMovies && (
-              <span className="block mt-2 text-destructive font-semibold">
-                Warning: This VJ has {vj._count?.movies} movie(s) associated.
-              </span>
-            )}
+            Are you sure you want to delete <strong>{movie.title}</strong>? This action cannot be undone.
+            All watch history and analytics data will also be deleted.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

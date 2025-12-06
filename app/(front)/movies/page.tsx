@@ -1,64 +1,74 @@
-"use client"
 
-import { useState } from "react"
-import { moviesData } from "@/lib/movies-data"
-import { MovieFilters } from "@/components/front-end/movie-filters"
-import { MovieGrid } from "@/components/front-end/movie-grid"
-import { Footer } from "@/components/front-end/footer"
 
-export default function MoviesPage() {
-  const [filteredMovies, setFilteredMovies] = useState(moviesData)
 
-  const handleFilterChange = (filters: {
-    genre: string
-    vj: string
-    year: string
-    search: string
-  }) => {
-    let filtered = [...moviesData]
+import { listMovies } from "@/actions/movies";
+import { listGenres } from "@/actions/genres";
+import { listVJs } from "@/actions/vjs";
+import { MovieFilters } from "./components/movies-filters";
+import { MovieGrid } from "./components/movies-grid";
+import { listReleaseYears } from "@/actions/releaseYear";
 
-    // Filter by genre
-    if (filters.genre !== "all") {
-      filtered = filtered.filter((movie) => movie.genre.toLowerCase() === filters.genre.toLowerCase())
-    }
+export default async function MoviesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{
+    genre?: string;
+    vj?: string;
+    year?: string;
+    search?: string;
+    page?: string;
+  }>;
+}) {
+  const params = await searchParams;
+  const currentPage = parseInt(params.page || "1");
 
-    // Filter by VJ/Translation status
-    if (filters.vj !== "all") {
-      if (filters.vj === "translated") {
-        filtered = filtered.filter((movie) => movie.vj)
-      } else if (filters.vj === "non-translated") {
-        filtered = filtered.filter((movie) => !movie.vj)
-      } else {
-        // Specific VJ
-        filtered = filtered.filter((movie) => movie.vj === filters.vj)
-      }
-    }
+  // Fetch movies with filters
+  const moviesData = await listMovies({
+    genreId: params.genre && params.genre !== "all" ? params.genre : undefined,
+    vjId: params.vj && params.vj !== "all" ? params.vj : undefined,
+    yearId: params.year && params.year !== "all" ? params.year : undefined,
+    search: params.search || undefined,
+    page: currentPage,
+    limit: 20,
+  });
 
-    // Filter by year
-    if (filters.year !== "all") {
-      filtered = filtered.filter((movie) => movie.year.toString() === filters.year)
-    }
+  // Fetch filter options
+  const [genresData, vjsData, yearsData] = await Promise.all([
+    listGenres(),
+    listVJs(),
+    listReleaseYears(),
+  ]);
 
-    // Filter by search
-    if (filters.search) {
-      filtered = filtered.filter((movie) => movie.title.toLowerCase().includes(filters.search.toLowerCase()))
-    }
-
-    setFilteredMovies(filtered)
-  }
+  const movies = moviesData.data || [];
+  const genres = genresData.data || [];
+  const vjs = vjsData.data || [];
+  const years = yearsData.data || [];
+  const pagination = moviesData.pagination;
 
   return (
     <div className="min-h-screen bg-background">
       <main className="pt-24 px-2 md:px-8 lg:px-12 pb-12">
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-foreground mb-2">Movies</h1>
-          <p className="text-muted-foreground">Discover our collection of {moviesData.length} premium movies</p>
+          <p className="text-muted-foreground">
+            Discover our collection of {pagination?.total || movies.length} premium movies
+          </p>
         </div>
 
-        <MovieFilters onFilterChange={handleFilterChange} />
-        <MovieGrid movies={filteredMovies} />
+        <MovieFilters 
+          genres={genres}
+          vjs={vjs}
+          years={years}
+          initialFilters={{
+            genre: params.genre || "all",
+            vj: params.vj || "all",
+            year: params.year || "all",
+            search: params.search || "",
+          }}
+        />
+        
+        <MovieGrid movies={movies} />
       </main>
-      {/* <Footer /> */}
     </div>
-  )
+  );
 }

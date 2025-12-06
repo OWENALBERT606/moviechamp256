@@ -1,76 +1,71 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Play, Star } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
-
-interface Movie {
-  id: number
-  title: string
-  image: string
-  rating: number
-  year: number
-  genre: string
-  length: string
-}
+import Link from "next/link";
+import Image from "next/image";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Star, Play } from "lucide-react";
+import type { Movie } from "@/actions/movies"; // Use the backend Movie type
 
 interface RelatedMoviesProps {
-  movies: Movie[]
+  movies: Movie[];
 }
 
 export function RelatedMovies({ movies }: RelatedMoviesProps) {
-  const [hoveredMovie, setHoveredMovie] = useState<number | null>(null)
-
   if (movies.length === 0) {
-    return null
+    return null;
   }
 
   return (
     <div className="mt-12">
-      <h2 className="text-2xl font-bold text-foreground mb-6">Related Movies</h2>
+      <h2 className="text-2xl font-semibold mb-6">Related Movies</h2>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         {movies.map((movie) => (
-          <div
-            key={movie.id}
-            className="group cursor-pointer"
-            onMouseEnter={() => setHoveredMovie(movie.id)}
-            onMouseLeave={() => setHoveredMovie(null)}
-          >
-            <div className="relative overflow-hidden rounded-lg bg-card transition-transform duration-300 group-hover:scale-105">
-              <img src={movie.image || "/placeholder.svg"} alt={movie.title} className="w-full h-64 object-cover" />
+          <Link key={movie.id} href={`/movies/${movie.slug}`}>
+            <Card className="group relative overflow-hidden cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-xl">
+              <div className="relative aspect-[2/3]">
+                <Image
+                  src={movie.poster || movie.image}
+                  alt={movie.title}
+                  fill
+                  className="object-cover"
+                />
+                
+                {/* Hover Overlay */}
+                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                  <Play className="h-10 w-10 text-white" />
+                </div>
 
-              {/* Rating Badge */}
-              <div className="absolute top-2 right-2 bg-black/70 backdrop-blur-sm px-2 py-1 rounded-md flex items-center space-x-1">
-                <Star className="w-3 h-3 fill-primary text-primary" />
-                <span className="text-xs font-semibold text-white">{movie.rating}</span>
-              </div>
+                {/* Rating Badge */}
+                <div className="absolute top-2 right-2">
+                  <Badge className="bg-black/70 backdrop-blur-sm">
+                    <Star className="h-3 w-3 fill-yellow-400 text-yellow-400 mr-1" />
+                    {movie.rating.toFixed(1)}
+                  </Badge>
+                </div>
 
-              {/* Hover Overlay */}
-              <div
-                className={`absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent transition-opacity duration-300 ${
-                  hoveredMovie === movie.id ? "opacity-100" : "opacity-0"
-                }`}
-              >
-                <div className="absolute bottom-0 left-0 right-0 p-3 space-y-2">
-                  <h3 className="font-semibold text-white text-sm line-clamp-2">{movie.title}</h3>
-                  <div className="flex items-center space-x-1 text-xs text-white/70">
-                    <span>{movie.year}</span>
-                    <span>•</span>
-                    <span>{movie.length}</span>
+                {/* Trending Badge */}
+                {movie.isTrending && (
+                  <div className="absolute top-2 left-2">
+                    <Badge className="bg-red-600 text-white">Trending</Badge>
                   </div>
-                  <Link href={`/movies/${movie.id}`}>
-                    <Button size="sm" className="w-full bg-primary hover:bg-primary/90 golden-glow text-xs">
-                      <Play className="w-3 h-3 mr-1" />
-                      Watch
-                    </Button>
-                  </Link>
+                )}
+              </div>
+              
+              {/* Movie Info */}
+              <div className="p-3">
+                <h3 className="font-semibold text-sm line-clamp-1 mb-1">
+                  {movie.title}
+                </h3>
+                <div className="flex items-center justify-between text-xs text-muted-foreground">
+                  <span>{movie.year.value}</span>
+                  <span className="truncate">{movie.genre.name}</span>
                 </div>
               </div>
-            </div>
-          </div>
+            </Card>
+          </Link>
         ))}
       </div>
     </div>
-  )
+  );
 }

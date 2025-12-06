@@ -2,25 +2,25 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
-import { VJForm } from "../components/vj-form";
+import { MovieForm } from "../components/movie-form";
 
-export default function NewVJPage() {
+export default function NewMoviePage() {
   return (
-    <div className="container mx-auto py-8 px-4 max-w-2xl">
+    <div className="container mx-auto py-8 px-4 max-w-4xl">
       <Button variant="ghost" asChild className="mb-4">
-        <Link href="/dashboard/vjs">
+        <Link href="/dashboard/movies">
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to VJs
+          Back to Movies
         </Link>
       </Button>
 
       <Card>
         <CardHeader>
-          <CardTitle>Add VJ</CardTitle>
-          <CardDescription>Add a new video jockey to your collection</CardDescription>
+          <CardTitle>Add Movie</CardTitle>
+          <CardDescription>Add a new movie to your collection</CardDescription>
         </CardHeader>
         <CardContent>
-          <VJForm />
+          <MovieForm />
         </CardContent>
       </Card>
     </div>
