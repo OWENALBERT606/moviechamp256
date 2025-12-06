@@ -8,7 +8,6 @@ export default async function MoviesPage() {
   const moviesData = await listMovies();
   const movies = moviesData.data || [];
 
-  console.log(movies);
   
   return (
     <div className="container mx-auto py-8 px-4">
