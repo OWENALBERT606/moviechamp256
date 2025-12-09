@@ -26,7 +26,7 @@ export function Header() {
               <Link href="/movies" className="text-muted-foreground hover:text-primary transition-colors">
                 Movies
               </Link>
-              <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
+              <Link href="/series" className="text-muted-foreground hover:text-primary transition-colors">
                 Series
               </Link>
               <Link href="/documentaries" className="text-muted-foreground hover:text-primary transition-colors">
