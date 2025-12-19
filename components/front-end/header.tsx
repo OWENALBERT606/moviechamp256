@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import Image from "next/image"
 import Link from "next/link"
 
-export function Header() {
+export function Header({user}: {user?:any}) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   return (
@@ -29,15 +29,15 @@ export function Header() {
               <Link href="/series" className="text-muted-foreground hover:text-primary transition-colors">
                 Series
               </Link>
-              <Link href="/documentaries" className="text-muted-foreground hover:text-primary transition-colors">
+              {/* <Link href="/documentaries" className="text-muted-foreground hover:text-primary transition-colors">
                 Documentaries
-              </Link>
+              </Link> */}
               <Link href="/list" className="text-muted-foreground hover:text-primary transition-colors">
                 My List
               </Link>
-              <Link href="/shows" className="text-muted-foreground hover:text-primary transition-colors">
+              {/* <Link href="/shows" className="text-muted-foreground hover:text-primary transition-colors">
                 TV Shows
-              </Link>
+              </Link> */}
             </nav>
           </div>
 
@@ -57,9 +57,52 @@ export function Header() {
             </Button>
 
             {/* Profile */}
-            <Link href="/login" className="text-muted-foreground hover:text-primary transition-colors">
-                Login
-              </Link>
+           {/* Profile */}
+{user ? (
+  <div className="relative group">
+    <button className="flex items-center gap-2 focus:outline-none">
+      {user.image ? (
+        <Image
+          src={user.image}
+          alt={user.name}
+          width={32}
+          height={32}
+          className="rounded-full"
+        />
+      ) : (
+        <div className="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center text-white text-sm font-bold">
+          {user.email?.[0]?.toUpperCase()}
+        </div>
+      )}
+      <span className="hidden md:block text-sm text-foreground">
+        {user.email}
+      </span>
+    </button>
+
+    {/* Dropdown */}
+    <div className="absolute right-0 mt-2 w-48 bg-background border border-border rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition">
+      <div className="px-4 py-3 border-b border-border">
+        <p className="text-sm font-medium">{user.name}</p>
+        <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+      </div>
+
+      <button
+        onClick={() => {
+          // 🔴 replace with your logout action
+          fetch("/api/logout").then(() => location.reload())
+        }}
+        className="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-secondary"
+      >
+        Logout
+      </button>
+    </div>
+  </div>
+) : (
+  <Link href="/login">
+    <Button variant="default">Login</Button>
+  </Link>
+)}
+
 
             {/* Mobile Menu Button */}
             <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>

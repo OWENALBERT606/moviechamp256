@@ -27,6 +27,14 @@ export default function LoginPage() {
               </Link>
             </p>
           </div>
+          <div className="mt-6 text-center">
+            <p className="text-muted-foreground">
+              Back to Home{" "}
+              <Link href="/" className="text-primary hover:underline font-semibold">
+                Home
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
 

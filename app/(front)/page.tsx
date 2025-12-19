@@ -1,141 +1,160 @@
-// import { getComingSoonMovies, getTrendingMovies, listMovies } from "@/actions/movies"
-// import { ComingSoon } from "@/components/front-end/coming-soon"
-// import { ContinueWatching } from "@/components/front-end/continue-watching"
-// import { GenreFilter } from "@/components/front-end/genre-filter"
-// import { HeroCarousel } from "@/components/front-end/hero-couresel"
-// import { MovieSection } from "@/components/front-end/movie-section"
-// import { Pricing } from "@/components/front-end/pricing"
 
 
-// export default async function HomePage() {
-//    const moviesData = await listMovies();
-//     const movies = moviesData.data || [];
-
-//      const [
-//     trendingData,
-//     comingSoonData,
-//     allMoviesData,
-//   ] = await Promise.all([
-//     getTrendingMovies(10), // Get 10 trending movies
-//     getComingSoonMovies(10), // Get 10 coming soon movies
-//     listMovies({ limit: 50 }), // Get more movies for filtering
-//   ]);
-
-
-//    const trendingMovies = trendingData.data || [];
-//   const comingSoonMovies = comingSoonData.data || [];
-//   const allMovies = allMoviesData.data || [];
-
-
-
-
-//    const actionMovies = allMovies.filter(
-//     movie => movie.genre.name.toLowerCase().includes('action')
-//   ).slice(0, 10);
-
-//   const dramaMovies = allMovies.filter(
-//     movie => movie.genre.name.toLowerCase().includes('drama')
-//   ).slice(0, 10);
-
-//   const thrillerMovies = allMovies.filter(
-//     movie => movie.genre.name.toLowerCase().includes('thriller')
-//   ).slice(0, 10);
-
-// const newReleases = [...allMovies]
-//     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-//     .slice(0, 10);
-
-//   return (
-//     <div className="min-h-screen bg-background">
-//       <HeroCarousel movies={movies} />
-//       <main className="px-4 md:px-12 lg:px-24">
-//         <div className="px-4 md:px-8 lg:px-12 space-y-12 pb-12">
-//           <ContinueWatching />
-//           <GenreFilter />
-//           <MovieSection title="Trending Now" movies={trendingMovies} />
-//           <MovieSection title="Action Movies" movies={actionMovies} />
-//           <MovieSection title="Drama Series" movies={dramaMovies} />
-//           <MovieSection title="New Releases" movies={newReleases} />
-//           <ComingSoon movies={comingSoonMovies} />
-//         </div>
-//         <Pricing/>
-//       </main>
-//     </div>
-//   )
-// }
-
-
-
-
-import { getComingSoonMovies, getTrendingMovies, listMovies } from "@/actions/movies"
-import { ComingSoon } from "@/components/front-end/coming-soon"
-import { ContinueWatching } from "@/components/front-end/continue-watching"
-import { GenreFilter } from "@/components/front-end/genre-filter"
-import { HeroCarousel } from "@/components/front-end/hero-couresel"
-import { MovieSection } from "@/components/front-end/movie-section"
-import { Pricing } from "@/components/front-end/pricing"
+import { getSession } from "@/actions/auth";
+import { getComingSoonMovies, getTrendingMovies, listMovies } from "@/actions/movies";
+import { getComingSoonSeries, getTrendingSeries, listSeries } from "@/actions/series";
+import { ComingSoon } from "@/components/front-end/coming-soon";
+import { ContinueWatching } from "@/components/front-end/continue-watching";
+import { GenreFilter } from "@/components/front-end/genre-filter";
+import { HeroCarousel } from "@/components/front-end/hero-couresel";
+import { MovieSection } from "@/components/front-end/movie-section";
+import { Pricing } from "@/components/front-end/pricing";
+import { SeriesSection } from "@/components/series-component";
 
 export default async function HomePage() {
-  // Fetch all movie categories in parallel
-  const [trendingData, comingSoonData, allMoviesData] = await Promise.all([
-    getTrendingMovies(10), // Get 10 trending movies
-    getComingSoonMovies(10), // Get 10 coming soon movies
-    listMovies({ limit: 50 }), // Get more movies for filtering
-  ])
+   const session = await getSession();  
+    const user = session?.user;
+  // Fetch all movie and series categories in parallel
+  const [
+    trendingMoviesData,
+    comingSoonMoviesData,
+    allMoviesData,
+    trendingSeriesData,
+    comingSoonSeriesData,
+    allSeriesData,
+  ] = await Promise.all([
+    getTrendingMovies(10),
+    getComingSoonMovies(10),
+    listMovies({ limit: 50 }),
+    getTrendingSeries(10),
+    getComingSoonSeries(10),
+    listSeries({ limit: 50 }),
+  ]);
 
-  // Extract data
-  const trendingMovies = trendingData.data || []
-  const comingSoonMovies = comingSoonData.data || []
-  const allMovies = allMoviesData.data || []
+  // Extract movie data
+  const trendingMovies = trendingMoviesData.data || [];
+  const comingSoonMovies = comingSoonMoviesData.data || [];
+  const allMovies = allMoviesData.data || [];
 
-  // Get IDs of coming soon movies to exclude them
-  const comingSoonIds = new Set(comingSoonMovies.map((movie) => movie.id))
+  // Extract series data
+  const trendingSeries = trendingSeriesData.data || [];
+  const comingSoonSeries = comingSoonSeriesData.data || [];
+  const allSeries = allSeriesData.data || [];
 
-  // Filter out coming soon movies from all movies
-  const availableMovies = allMovies.filter((movie) => !comingSoonIds.has(movie.id))
-
-  // Filter trending movies (exclude coming soon)
+  // Filter movies (exclude coming soon)
+  const comingSoonMovieIds = new Set(comingSoonMovies.map((movie) => movie.id));
+  const availableMovies = allMovies.filter((movie) => !comingSoonMovieIds.has(movie.id));
   const availableTrendingMovies = trendingMovies.filter(
-    (movie) => !comingSoonIds.has(movie.id)
-  )
+    (movie) => !comingSoonMovieIds.has(movie.id)
+  );
 
-  // Filter by genre (exclude coming soon)
+  // Filter series (exclude coming soon)
+  const comingSoonSeriesIds = new Set(comingSoonSeries.map((series) => series.id));
+  const availableSeries = allSeries.filter((series) => !comingSoonSeriesIds.has(series.id));
+  const availableTrendingSeries = trendingSeries.filter(
+    (series) => !comingSoonSeriesIds.has(series.id)
+  );
+
+  // Filter movies by genre
   const actionMovies = availableMovies
     .filter((movie) => movie.genre.name.toLowerCase().includes("action"))
-    .slice(0, 10)
+    .slice(0, 10);
 
   const dramaMovies = availableMovies
     .filter((movie) => movie.genre.name.toLowerCase().includes("drama"))
-    .slice(0, 10)
+    .slice(0, 10);
 
   const thrillerMovies = availableMovies
     .filter((movie) => movie.genre.name.toLowerCase().includes("thriller"))
-    .slice(0, 10)
+    .slice(0, 10);
 
-  // Sort by newest (exclude coming soon)
-  const newReleases = [...availableMovies]
+  // Filter series by genre
+  const actionSeries = availableSeries
+    .filter((series) => series.genre.name.toLowerCase().includes("action"))
+    .slice(0, 10);
+
+  const dramaSeries = availableSeries
+    .filter((series) => series.genre.name.toLowerCase().includes("drama"))
+    .slice(0, 10);
+
+  const comedySeries = availableSeries
+    .filter((series) => series.genre.name.toLowerCase().includes("comedy"))
+    .slice(0, 10);
+
+  // New releases
+  const newMovies = [...availableMovies]
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-    .slice(0, 10)
+    .slice(0, 10);
 
-  // Hero carousel movies (first 5 trending, exclude coming soon)
-  const heroMovies = availableTrendingMovies.slice(0, 5)
+  const newSeries = [...availableSeries]
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .slice(0, 10);
+
+  // Hero carousel - combine top trending movies and series
+  const heroItems = [
+    ...availableTrendingMovies.slice(0, 3),
+    ...availableTrendingSeries.slice(0, 2),
+  ].slice(0, 5);
 
   return (
     <div className="min-h-screen bg-background">
-      <HeroCarousel movies={heroMovies} />
+      <HeroCarousel items={heroItems} />
       <main className="px-4 md:px-12 lg:px-24">
         <div className="px-4 md:px-8 lg:px-12 space-y-12 pb-12">
           <ContinueWatching />
           <GenreFilter />
-          <MovieSection title="🔥 Trending Now" movies={availableTrendingMovies} />
-          <MovieSection title="💥 Action Movies" movies={actionMovies} />
-          <MovieSection title="🎭 Drama Series" movies={dramaMovies} />
-          <MovieSection title="😱 Thriller Movies" movies={thrillerMovies} />
-          <MovieSection title="🆕 New Releases" movies={newReleases} />
-          <ComingSoon movies={comingSoonMovies} />
+          
+          {/* Trending Section - Mix of Movies and Series */}
+          {availableTrendingMovies.length > 0 && (
+            <MovieSection title="🔥 Trending Movies" movies={availableTrendingMovies} />
+          )}
+          
+          {availableTrendingSeries.length > 0 && (
+            <SeriesSection title="🔥 Trending TV Series" series={availableTrendingSeries} />
+          )}
+
+          {/* Genre Sections - Movies */}
+          {actionMovies.length > 0 && (
+            <MovieSection title="💥 Action Movies" movies={actionMovies} />
+          )}
+
+          {/* Genre Sections - Series */}
+          {dramaSeries.length > 0 && (
+            <SeriesSection title="🎭 Drama Series" series={dramaSeries} />
+          )}
+
+          {thrillerMovies.length > 0 && (
+            <MovieSection title="😱 Thriller Movies" movies={thrillerMovies} />
+          )}
+
+          {actionSeries.length > 0 && (
+            <SeriesSection title="💥 Action Series" series={actionSeries} />
+          )}
+
+          {comedySeries.length > 0 && (
+            <SeriesSection title="😂 Comedy Series" series={comedySeries} />
+          )}
+
+          {dramaMovies.length > 0 && (
+            <MovieSection title="🎬 Drama Movies" movies={dramaMovies} />
+          )}
+
+          {/* New Releases */}
+          {newSeries.length > 0 && (
+            <SeriesSection title="🆕 New TV Series" series={newSeries} />
+          )}
+
+          {newMovies.length > 0 && (
+            <MovieSection title="🆕 New Movie Releases" movies={newMovies} />
+          )}
+
+          {/* Coming Soon - Combined */}
+          {(comingSoonMovies.length > 0 || comingSoonSeries.length > 0) && (
+            <ComingSoon movies={comingSoonMovies} series={comingSoonSeries} />
+          )}
         </div>
         <Pricing />
       </main>
     </div>
-  )
+  );
 }

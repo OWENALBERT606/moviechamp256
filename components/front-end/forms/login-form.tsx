@@ -179,10 +179,14 @@ export function LoginForm() {
       if (result.success) {
         // Show success toast
         toast.success("Login successful!")
-
         // Login successful - redirect to dashboard
-        router.push("/dashboard")
-        router.refresh() // Refresh to update server components with new session
+        if(result.data?.user?.role === "SUPER_ADMIN"){
+          router.push("/dashboard")
+          router.refresh() // Refresh to update server components with new session
+        }else{
+          router.push("/")
+          router.refresh() // Refresh to update server components with new session  
+        }
       } else {
         // Show error toast
         toast.error("Invalid credentials. Please try again.")

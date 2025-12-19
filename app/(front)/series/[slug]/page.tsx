@@ -15,6 +15,8 @@ import {
 } from "lucide-react";
 import { getSeriesBySlug, incrementSeriesViews } from "@/actions/series";
 import { SeriesSection } from "../components/series-section";
+import { getSession } from "@/actions/auth";
+import { AuthGuard } from "@/components/auth-guard";
 
 export default async function SeriesDetailPage({ 
   params 
@@ -23,6 +25,15 @@ export default async function SeriesDetailPage({
 }) {
   const { slug } = await params;
   const seriesData = await getSeriesBySlug(slug);
+   const session = await getSession();
+     const isAuthenticated = !!session;
+  
+    if (!isAuthenticated) {
+      return <AuthGuard isAuthenticated={false} />;
+    }
+      
+        const user = session?.user;
+    
 
   if (!seriesData.success || !seriesData.data) {
     notFound();

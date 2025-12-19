@@ -1,60 +1,13 @@
 
-
-// import { getMovieBySlug, listMovies, incrementMovieViews } from "@/actions/movies";
-// import { MovieInfo } from "@/components/front-end/movie-info";
-// import { MoviePlayer } from "@/components/front-end/movie-player";
-// import { RelatedMovies } from "@/components/front-end/related-movies";
-// import { notFound } from "next/navigation";
-
-// export default async function MovieDetailPage({
-//   params,
-// }: {
-//   params: Promise<{ slug: string }>;
-// }) {
-//   const { slug } = await params;
-  
-//   // Fetch movie by slug
-//   const movieData = await getMovieBySlug(slug);
-//   const movie = movieData.data;
-
-//   if (!movie) {
-//     notFound();
-//   }
-
-//   // Increment view count (fire and forget)
-//   incrementMovieViews(movie.id).catch(console.error);
-
-//   // Fetch related movies (same genre)
-//   const relatedMoviesData = await listMovies({
-//     genreId: movie.genreId,
-//     limit: 6,
-//   });
-
-//   const relatedMovies = (relatedMoviesData.data || []).filter(
-//     (m) => m.id !== movie.id
-//   );
-
-//   return (
-//     <div className="min-h-screen px-2 bg-background">
-//       <main className="pt-20">
-//         <MoviePlayer movie={movie} />
-//         <div className="md:px-8 lg:px-12 py-12">
-//           <MovieInfo movie={movie} />
-//           <RelatedMovies movies={relatedMovies} />
-//         </div>
-//       </main>
-//     </div>
-//   );
-// }
-
-
 import { getMovieBySlug, listMovies, incrementMovieViews } from "@/actions/movies";
 
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import {MoviePlayerA } from "../components/movie-player";
 import { MovieDetails } from "../components/movie-details";
 import { MovieTrailer } from "../components/movie-trailer";
 import { RelatedMovies } from "../components/related-movies";
+import { getSession } from "@/actions/auth";
+import { AuthGuard } from "@/components/auth-guard";
 
 export default async function MovieDetailPage({
   params,
@@ -62,6 +15,14 @@ export default async function MovieDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  const session = await getSession();
+   const isAuthenticated = !!session;
+
+  if (!isAuthenticated) {
+    return <AuthGuard isAuthenticated={false} />;
+  }
+    
+      const user = session?.user;
   
   // Fetch movie by slug
   const movieData = await getMovieBySlug(slug);
