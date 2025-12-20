@@ -1,6 +1,5 @@
 
 
-
 // "use client"
 
 // import Link from "next/link"
@@ -8,11 +7,12 @@
 // import { Card } from "@/components/ui/card"
 // import { Badge } from "@/components/ui/badge"
 // import { Button } from "@/components/ui/button"
-// import { Star, Play } from "lucide-react"
+// import { Star, Play, Clock, Plus } from "lucide-react"
 // import type { Movie } from "@/actions/movies"
+// import { AddToListButton } from "./add-to-list-button"
 
 // interface MovieGridProps {
-//   movies: any[]
+//   movies: Movie[]
 // }
 
 // export function MovieGrid({ movies }: MovieGridProps) {
@@ -26,74 +26,111 @@
 //   }
 
 //   return (
- 
 //     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-//   {movies.map((movie) => (
-//     <Link key={movie.id} href={`/movies/${movie.slug}`}>
-//       <Card className="group relative overflow-hidden cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-0 bg-transparent p-0">
-//         {/* Movie Poster */}
-//         <div className="relative aspect-[2/3] w-full h-full">
-//           <Image 
-//             src={movie.poster || movie.image} 
-//             alt={movie.title} 
-//             fill 
-//             className="object-cover rounded-lg" 
-//           />
+//       {movies.map((movie) => (
+//         <Card 
+//           key={movie.id}
+//           className="group relative overflow-hidden cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-0 bg-transparent p-0"
+//         >
+//           {/* Movie Poster */}
+//           <Link 
+//             href={movie.isComingSoon ? "#" : `/movies/${movie.slug}`}
+//             className={movie.isComingSoon ? "cursor-not-allowed" : ""}
+//           >
+//             <div className="relative aspect-[2/3] w-full h-full">
+//               <Image 
+//                 src={movie.poster || movie.image} 
+//                 alt={movie.title} 
+//                 fill 
+//                 className={`object-cover rounded-lg ${movie.isComingSoon ? "grayscale group-hover:grayscale-0" : ""}`}
+//               />
 
-//           {/* Hover Overlay */}
-//           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4 rounded-lg">
-//             {/* Movie Title */}
-//             <h3 className="text-white font-bold text-lg mb-3 line-clamp-2">{movie.title}</h3>
+//               {/* Hover Overlay */}
+//               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4 rounded-lg">
+//                 {/* Movie Title */}
+//                 <h3 className="text-white font-bold text-lg mb-2 line-clamp-2">{movie.title}</h3>
 
-//             {/* Movie Info Grid */}
-//             <div className="space-y-2 text-white text-xs mb-4">
-//               <div className="flex items-center justify-between">
-//                 <div className="flex gap-2 text-white/80">
-//                   <span>{movie.year?.value || "N/A"}</span>
-//                   <span>•</span>
-//                   <span>{movie.genre?.name || "N/A"}</span>
-//                   <span>•</span>
-//                   <span>{movie.length || "N/A"}</span>
+//                 {/* Movie Info Grid */}
+//                 <div className="space-y-1 text-white text-xs mb-3">
+//                   <div className="flex items-center justify-between">
+//                     <div className="flex gap-2 text-white/80">
+//                       <span>{movie.year?.value || "N/A"}</span>
+//                       <span>•</span>
+//                       <span>{movie.genre?.name || "N/A"}</span>
+//                     </div>
+//                   </div>
+//                   <div className="flex items-center gap-2 text-white/70 text-xs">
+//                     <Clock className="h-3 w-3" />
+//                     <span>{movie.length || "N/A"}</span>
+//                   </div>
+//                   {movie.vj && (
+//                     <p className="text-white/70">
+//                       VJ {movie.vj.name}
+//                     </p>
+//                   )}
+//                 </div>
+
+//                 {/* Action Buttons */}
+//                 <div className="flex gap-2">
+//                   {/* Watch Now or Coming Soon Button */}
+//                   {movie.isComingSoon ? (
+//                     <Button 
+//                       className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs h-8"
+//                       disabled
+//                     >
+//                       <Clock className="h-3 w-3 mr-1" />
+//                       Coming Soon
+//                     </Button>
+//                   ) : (
+//                     <Button className="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-semibold text-xs h-8">
+//                       <Play className="h-3 w-3 mr-1 fill-white" />
+//                       Watch
+//                     </Button>
+//                   )}
+
+//                   {/* Add to List Button */}
+//                   <AddToListButton
+//                     itemId={movie.id}
+//                     type="movie"
+//                     variant="outline"
+//                     size="sm"
+//                     showText={false}
+//                     className="h-8 w-8 p-0 border-white/20 hover:bg-white/20 bg-white/10 text-white"
+//                   />
 //                 </div>
 //               </div>
-//               {movie.vj && (
-//                 <p className="text-white/70">
-//                   VJ {movie.vj.name}
-//                 </p>
+
+//               {/* Rating Badge */}
+//               <div className="absolute top-3 right-3 z-10">
+//                 <Badge className="bg-black/70 backdrop-blur-sm border-0">
+//                   <Star className="h-3 w-3 fill-yellow-400 text-yellow-400 mr-1" />
+//                   {movie.rating.toFixed(1)}
+//                 </Badge>
+//               </div>
+
+//               {/* Trending Badge (Top Left) */}
+//               {movie.isTrending && !movie.isComingSoon && (
+//                 <div className="absolute top-3 left-3 z-10">
+//                   <Badge className="bg-red-600 text-white border-0">🔥 Trending</Badge>
+//                 </div>
+//               )}
+
+//               {/* Coming Soon Badge (Top Left) */}
+//               {movie.isComingSoon && (
+//                 <div className="absolute top-3 left-3 z-10">
+//                   <Badge className="bg-blue-600 text-white border-0 animate-pulse">
+//                     <Clock className="h-3 w-3 mr-1" />
+//                     Coming Soon
+//                   </Badge>
+//                 </div>
 //               )}
 //             </div>
-
-//             {/* Watch Now Button */}
-//             <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold mb-2">
-//               <Play className="h-4 w-4 mr-2 fill-white" />
-//               Watch Now
-//             </Button>
-//           </div>
-
-//           {/* Rating Badge */}
-//           <div className="absolute top-3 right-3 z-10">
-//             <Badge className="bg-black/70 backdrop-blur-sm border-0">
-//               <Star className="h-3 w-3 fill-yellow-400 text-yellow-400 mr-1" />
-//               {movie.rating.toFixed(1)}
-//             </Badge>
-//           </div>
-
-//           {/* Trending Badge */}
-//           {movie.isTrending && (
-//             <div className="absolute top-3 left-3 z-10">
-//               <Badge className="bg-red-600 text-white border-0">Trending</Badge>
-//             </div>
-//           )}
-//         </div>
-//       </Card>
-//     </Link>
-//   ))}
-// </div>
+//           </Link>
+//         </Card>
+//       ))}
+//     </div>
 //   )
 // }
-
-
-
 
 
 
@@ -107,12 +144,14 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Star, Play, Clock } from "lucide-react"
 import type { Movie } from "@/actions/movies"
+import { AddToListButton } from "./add-to-list-button"
 
 interface MovieGridProps {
   movies: Movie[]
+  userId?: string
 }
 
-export function MovieGrid({ movies }: MovieGridProps) {
+export function MovieGrid({ movies,userId }: MovieGridProps) {
   if (movies.length === 0) {
     return (
       <div className="text-center py-12">
@@ -125,14 +164,16 @@ export function MovieGrid({ movies }: MovieGridProps) {
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
       {movies.map((movie) => (
-        <Link 
-          key={movie.id} 
-          href={movie.isComingSoon ? "#" : `/movies/${movie.slug}`}
-          className={movie.isComingSoon ? "cursor-not-allowed" : ""}
+        <Card 
+          key={movie.id}
+          className="group relative overflow-hidden cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-0 bg-transparent p-0"
         >
-          <Card className="group relative overflow-hidden cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-0 bg-transparent p-0">
-            {/* Movie Poster */}
-            <div className="relative aspect-[2/3] w-full h-full">
+          {/* Movie Poster */}
+          <div className="relative aspect-[2/3] w-full h-full">
+            <Link 
+              href={movie.isComingSoon ? "#" : `/movies/${movie.slug}`}
+              className={movie.isComingSoon ? "cursor-not-allowed" : ""}
+            >
               <Image 
                 src={movie.poster || movie.image} 
                 alt={movie.title} 
@@ -140,85 +181,110 @@ export function MovieGrid({ movies }: MovieGridProps) {
                 className={`object-cover rounded-lg ${movie.isComingSoon ? "grayscale group-hover:grayscale-0" : ""}`}
               />
 
-              {/* Hover Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4 rounded-lg">
-                {/* Movie Title */}
-                <h3 className="text-white font-bold text-lg mb-3 line-clamp-2">{movie.title}</h3>
+              {/* Gradient Overlay (Always visible at bottom) */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent rounded-lg pointer-events-none" />
 
-                {/* Movie Info Grid */}
-                <div className="space-y-2 text-white text-xs mb-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex gap-2 text-white/80">
-                      <span>{movie.year?.value || "N/A"}</span>
-                      <span>•</span>
-                      <span>{movie.genre?.name || "N/A"}</span>
-                      <span>•</span>
-                      <span>{movie.length || "N/A"}</span>
-                    </div>
-                  </div>
-                  {movie.vj && (
-                    <p className="text-white/70">
-                      VJ {movie.vj.name}
-                    </p>
-                  )}
+              {/* Title & Info (Always visible) */}
+              <div className="absolute bottom-0 left-0 right-0 p-3 pointer-events-none">
+                <h3 className="text-white font-bold text-sm mb-1 line-clamp-2">
+                  {movie.title}
+                </h3>
+                <div className="flex items-center gap-2 text-xs text-white/80">
+                  <span>{movie.year?.value || "N/A"}</span>
+                  <span>•</span>
+                  <span>{movie.genre?.name || "N/A"}</span>
                 </div>
-
-                {/* Watch Now or Coming Soon Button */}
-                {movie.isComingSoon ? (
-                  <Button 
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold mb-2"
-                    disabled
-                  >
-                    <Clock className="h-4 w-4 mr-2" />
-                    Coming Soon
-                  </Button>
-                ) : (
-                  <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold mb-2">
-                    <Play className="h-4 w-4 mr-2 fill-white" />
-                    Watch Now
-                  </Button>
+                {movie.vj && (
+                  <p className="text-xs text-white/70 mt-1">
+                    VJ {movie.vj.name}
+                  </p>
                 )}
               </div>
+            </Link>
 
-              {/* Rating Badge */}
-              <div className="absolute top-3 right-3 z-10">
-                <Badge className="bg-black/70 backdrop-blur-sm border-0">
-                  <Star className="h-3 w-3 fill-yellow-400 text-yellow-400 mr-1" />
-                  {movie.rating.toFixed(1)}
+            {/* Action Buttons - Only visible on hover */}
+            <div className="absolute bottom-16 left-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20 pointer-events-auto">
+              {/* Watch Button */}
+              {movie.isComingSoon ? (
+                <Button 
+                  className="h-10 w-10 rounded-full bg-blue-600 hover:bg-blue-700 p-0 flex items-center justify-center"
+                  disabled
+                  title="Coming Soon"
+                >
+                  <Clock className="h-5 w-5 text-white" />
+                </Button>
+              ) : (
+                <Link href={`/movies/${movie.slug}`}>
+                  <Button 
+                    className="h-10 w-10 rounded-full bg-orange-500 hover:bg-orange-600 p-0 flex items-center justify-center"
+                    title="Play"
+                  >
+                    <Play className="h-5 w-5 text-white fill-white" />
+                  </Button>
+                </Link>
+              )}
+
+              {/* Add to List Button */}
+              <AddToListButton
+                itemId={movie.id}
+                userId={userId}
+                type="movie"
+                variant="secondary"
+                size="icon"
+                showText={false}
+                className="h-10 w-10 rounded-full bg-gray-800/80 hover:bg-gray-700 border-0 backdrop-blur-sm"
+              />
+
+              {/* Download Button (Optional) */}
+              <Button 
+                className="h-10 w-10 rounded-full bg-gray-800/80 hover:bg-gray-700 p-0 flex items-center justify-center border-0 backdrop-blur-sm"
+                title="Download"
+              >
+                <svg 
+                  className="h-5 w-5 text-white" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    strokeWidth={2} 
+                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" 
+                  />
+                </svg>
+              </Button>
+            </div>
+
+            {/* Rating Badge (Top Right) */}
+            <div className="absolute top-3 right-3 z-10">
+              <Badge className="bg-orange-500 text-white border-0 flex items-center gap-1 px-2 py-1">
+                <Star className="h-3 w-3 fill-white text-white" />
+                <span className="font-bold">{movie.rating.toFixed(1)}</span>
+              </Badge>
+            </div>
+
+            {/* Trending Badge (Top Left) */}
+            {movie.isTrending && !movie.isComingSoon && (
+              <div className="absolute top-3 left-3 z-10">
+                <Badge className="bg-red-600 text-white border-0 px-2 py-1 flex items-center gap-1">
+                  <span className="text-sm">🔥</span>
+                  <span className="font-bold text-xs">Trending</span>
                 </Badge>
               </div>
+            )}
 
-              {/* Trending Badge (Top Left) */}
-              {movie.isTrending && !movie.isComingSoon && (
-                <div className="absolute top-3 left-3 z-10">
-                  <Badge className="bg-red-600 text-white border-0">🔥 Trending</Badge>
-                </div>
-              )}
-
-              {/* Coming Soon Badge (Top Left) */}
-              {movie.isComingSoon && (
-                <div className="absolute top-3 left-3 z-10">
-                  <Badge className="bg-blue-600 text-white border-0 animate-pulse">
-                    <Clock className="h-3 w-3 mr-1" />
-                    Coming Soon
-                  </Badge>
-                </div>
-              )}
-
-              {/* Coming Soon Overlay (Optional - adds extra emphasis) */}
-              {movie.isComingSoon && (
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center rounded-lg opacity-0 group-hover:opacity-0 pointer-events-none">
-                  <div className="bg-blue-600/90 backdrop-blur-sm px-4 py-2 rounded-full">
-                    <span className="text-white font-bold text-sm flex items-center gap-2">
-                      <Clock className="h-4 w-4" />
-                      Coming Soon
-                    </span>
-                  </div>
-                </div>
-              )}
-            </div>
-          </Card>
-        </Link>
+            {/* Coming Soon Badge (Top Left) */}
+            {movie.isComingSoon && (
+              <div className="absolute top-3 left-3 z-10">
+                <Badge className="bg-blue-600 text-white border-0 animate-pulse px-2 py-1">
+                  <Clock className="h-3 w-3 mr-1" />
+                  <span className="font-bold text-xs">Coming Soon</span>
+                </Badge>
+              </div>
+            )}
+          </div>
+        </Card>
       ))}
     </div>
   )

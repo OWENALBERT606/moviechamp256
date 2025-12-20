@@ -7,6 +7,7 @@ import { listVJs } from "@/actions/vjs";
 import { MovieFilters } from "./components/movies-filters";
 import { MovieGrid } from "./components/movies-grid";
 import { listReleaseYears } from "@/actions/releaseYear";
+import { getSession } from "@/actions/auth";
 
 export default async function MoviesPage({
   searchParams,
@@ -19,6 +20,9 @@ export default async function MoviesPage({
     page?: string;
   }>;
 }) {
+   const session = await getSession();
+      // if (!session) redirect("/login");
+  const userId = session?.user?.id;
   const params = await searchParams;
   const currentPage = parseInt(params.page || "1");
 
@@ -67,7 +71,7 @@ export default async function MoviesPage({
           }}
         />
         
-        <MovieGrid movies={movies} />
+        <MovieGrid userId={userId} movies={movies} />
       </main>
     </div>
   );

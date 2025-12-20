@@ -2,6 +2,7 @@ import { listSeries, getTrendingSeries, getComingSoonSeries } from "@/actions/se
 import { SeriesHero } from "./components/series-hero";
 import { SeriesSection } from "./components/series-section";
 import { SeriesGrid } from "./components/series-grid";
+import { getSession } from "@/actions/auth";
 
 
 export default async function SeriesPage() {
@@ -11,9 +12,14 @@ export default async function SeriesPage() {
     getComingSoonSeries(10),
   ]);
 
+
+    const session = await getSession();
+    const userId = session?.user?.id;
+
   const allSeries = allSeriesData.data || [];
   const trendingSeries = trendingData.data || [];
   const comingSoonSeries = comingSoonData.data || [];
+
 
   console.log(allSeries)
 
@@ -41,45 +47,45 @@ export default async function SeriesPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <SeriesHero series={featuredSeries} />
+      <SeriesHero userId={userId} series={featuredSeries} />
 
       {/* Series Sections */}
       <main className="px-4 md:px-12 lg:px-24">
         <div className="px-4 md:px-8 lg:px-12 space-y-12 pb-12">
           {/* Trending Series */}
           {trendingSeries.length > 0 && (
-            <SeriesSection title="🔥 Trending Series" series={trendingSeries} />
+            <SeriesSection userId={userId} title="🔥 Trending Series" series={trendingSeries} />
           )}
 
           {/* Action Series */}
           {actionSeries.length > 0 && (
-            <SeriesSection title="💥 Action Series" series={actionSeries} />
+            <SeriesSection userId={userId} title="💥 Action Series" series={actionSeries} />
           )}
 
           {/* Drama Series */}
           {dramaSeries.length > 0 && (
-            <SeriesSection title="🎭 Drama Series" series={dramaSeries} />
+            <SeriesSection userId={userId} title="🎭 Drama Series" series={dramaSeries} />
           )}
 
           {/* Comedy Series */}
           {comedySeries.length > 0 && (
-            <SeriesSection title="😂 Comedy Series" series={comedySeries} />
+            <SeriesSection userId={userId} title="😂 Comedy Series" series={comedySeries} />
           )}
 
           {/* New Series */}
           {newSeries.length > 0 && (
-            <SeriesSection title="🆕 New Series" series={newSeries} />
+            <SeriesSection userId={userId} title="🆕 New Series" series={newSeries} />
           )}
 
           {/* Coming Soon */}
           {comingSoonSeries.length > 0 && (
-            <SeriesSection title="📅 Coming Soon" series={comingSoonSeries} />
+            <SeriesSection userId={userId} title="📅 Coming Soon" series={comingSoonSeries} />
           )}
 
           {/* All Series Grid */}
           <div>
             <h2 className="text-2xl font-bold mb-6">All TV Series</h2>
-            <SeriesGrid series={allSeries} />
+            <SeriesGrid userId={userId} series={allSeries} />
           </div>
         </div>
       </main>

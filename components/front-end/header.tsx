@@ -1,14 +1,25 @@
 "use client"
 
-import { useState } from "react"
-import { Search, Bell, User, Menu, X } from "lucide-react"
+import { useState, useTransition } from "react"
+import { Search, Bell, User, Menu, X, LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import Image from "next/image"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { logoutUser } from "@/actions/auth"
 
 export function Header({user}: {user?:any}) {
+    const [isLoggingOut, startTransition] = useTransition();
+    const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+
+       const handleLogout = () => {
+      startTransition(async () => {
+        await logoutUser();          // clears HttpOnly cookies on the server
+        router.replace("/");    // send user to login
+      });
+    };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border">
@@ -85,8 +96,18 @@ export function Header({user}: {user?:any}) {
         <p className="text-sm font-medium">{user.name}</p>
         <p className="text-xs text-muted-foreground truncate">{user.email}</p>
       </div>
-
-      <button
+       <Button
+       className="bg-transparent text-white"
+                              onSelect={(e) => {
+                              e.preventDefault(); // prevent menu default behavior
+                              if (!isLoggingOut) handleLogout();
+                          }}
+                            disabled={isLoggingOut}
+                >
+                  <LogOut />
+                  {isLoggingOut ? "Logging out..." : "Log out"}
+                </Button>
+      {/* <button
         onClick={() => {
           // 🔴 replace with your logout action
           fetch("/api/logout").then(() => location.reload())
@@ -94,7 +115,7 @@ export function Header({user}: {user?:any}) {
         className="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-secondary"
       >
         Logout
-      </button>
+      </button> */}
     </div>
   </div>
 ) : (
