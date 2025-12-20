@@ -2,12 +2,12 @@
 import { getMovieBySlug, listMovies, incrementMovieViews } from "@/actions/movies";
 
 import { notFound, redirect } from "next/navigation";
-import {MoviePlayerA } from "../components/movie-player";
 import { MovieDetails } from "../components/movie-details";
 import { MovieTrailer } from "../components/movie-trailer";
 import { RelatedMovies } from "../components/related-movies";
 import { getSession } from "@/actions/auth";
 import { AuthGuard } from "@/components/auth-guard";
+import { MoviePlayer } from "../components/movie-player";
 
 export default async function MovieDetailPage({
   params,
@@ -48,14 +48,14 @@ export default async function MovieDetailPage({
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Hero Video Player Section */}
-      <MoviePlayerA movie={movie} />
+      <MoviePlayer movie={movie} userId={user?.id || ""} />
 
       {/* Main Content */}
       <div className="container mx-auto px-4 md:px-8 lg:px-16 md:mt-32 relative z-10">
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Left Column - Main Info */}
           <div className="lg:col-span-2 space-y-8">
-            <MovieDetails movie={movie} />
+            <MovieDetails userId={user?.id || ""} movie={movie} />
             
             {/* Trailer Section */}
             {movie.trailerUrl && (

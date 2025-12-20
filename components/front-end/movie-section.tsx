@@ -9,14 +9,16 @@ import Image from "next/image"
 import { ArrowBigDown, ChevronLeft, ChevronRight, Play, Plus, Star, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import type { Movie } from "@/actions/movies"
+import { AddToListButton } from "@/app/(front)/movies/components/add-to-list-button"
 
 interface MovieSectionProps {
   title: string
   movies: Movie[]
-  viewAllHref?: string // Optional custom link
+  userId?: string | null;
+  viewAllHref?: string
 }
 
-export function MovieSection({ title, movies, viewAllHref = "/movies" }: MovieSectionProps) {
+export function MovieSection({ title, movies, userId, viewAllHref = "/movies" }: MovieSectionProps) {
   const [scrollPosition, setScrollPosition] = useState(0)
   const [hoveredMovie, setHoveredMovie] = useState<string | null>(null)
 
@@ -103,14 +105,15 @@ export function MovieSection({ title, movies, viewAllHref = "/movies" }: MovieSe
                           <Play className="w-3 h-3 fill-white" />
                         </Link>
                       </Button>
-                      <Button
-                        title="Add to my list"
-                        size="sm"
-                        variant="outline"
-                        className="border-white/20 hover:bg-white/20 bg-white/10 h-7 w-7 p-0"
-                      >
-                        <Plus className="w-3 h-3" />
-                      </Button>
+                     <AddToListButton
+                                    itemId={movie.id}
+                                    type="movie"
+                                    userId={userId || undefined}
+                                    variant="secondary"
+                                    size="icon"
+                                    showText={false}
+                                    className="h-10 w-10 rounded-full bg-gray-800/80 hover:bg-gray-700 border-0 backdrop-blur-sm"
+                                  />
                       <Button
                         size="sm"
                         title="Download"

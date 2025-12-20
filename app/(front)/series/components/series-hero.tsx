@@ -4,12 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Play, Plus, Star, Eye } from "lucide-react";
 import type { Series } from "@/actions/series";
+import { AddToListButton } from "../../movies/components/add-to-list-button";
 
 interface SeriesHeroProps {
   series: Series;
+  userId?: string | null;
 }
 
-export function SeriesHero({ series }: SeriesHeroProps) {
+export function SeriesHero({ series,userId}: SeriesHeroProps) {
   const viewsCount = Number(series.viewsCount || 0);
 
   return (
@@ -80,14 +82,16 @@ export function SeriesHero({ series }: SeriesHeroProps) {
                   {series.isComingSoon ? "View Details" : "Watch Now"}
                 </Link>
               </Button>
-              <Button 
-                size="lg" 
-                variant="outline" 
-                className="bg-white/10 border-white/20 text-white hover:bg-white/20 text-lg px-8"
-              >
-                <Plus className="w-5 h-5 mr-2" />
-                My List
-              </Button>
+                {/* Add to List Button */}
+                              <AddToListButton
+                                itemId={series.id}
+                                type="series"
+                                userId={userId || undefined}
+                                variant="secondary"
+                                size="icon"
+                                showText={false}
+                                className="h-8 w-8 rounded-full bg-gray-800/80 hover:bg-gray-700 border-0 backdrop-blur-sm"
+                              />
             </div>
           </div>
         </div>

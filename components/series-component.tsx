@@ -6,13 +6,15 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Play, Plus, Star } from "lucide-react";
 import type { Series } from "@/actions/series";
+import { AddToListButton } from "@/app/(front)/movies/components/add-to-list-button";
 
 interface SeriesSectionProps {
   title: string;
   series: Series[];
+  userId?: string | null;
 }
 
-export function SeriesSection({ title, series }: SeriesSectionProps) {
+export function SeriesSection({ title, series, userId }: SeriesSectionProps) {
   const [scrollPosition, setScrollPosition] = useState(0);
   const [hoveredSeries, setHoveredSeries] = useState<string | null>(null);
 
@@ -99,14 +101,15 @@ export function SeriesSection({ title, series }: SeriesSectionProps) {
                           <Play className="w-3 h-3 fill-white" />
                         </Link>
                       </Button>
-                      <Button
-                        title="Add to my list"
-                        size="sm"
-                        variant="outline"
-                        className="border-white/20 hover:bg-white/20 bg-white/10 h-7 w-7 p-0"
-                      >
-                        <Plus className="w-3 h-3" />
-                      </Button>
+                       <AddToListButton
+                                      itemId={s.id}
+                                      type="series"
+                                      userId={userId || undefined}
+                                      variant="secondary"
+                                      size="icon"
+                                      showText={false}
+                                      className="h-10 w-10 rounded-full bg-gray-800/80 hover:bg-gray-700 border-0 backdrop-blur-sm"
+                                    />
                     </div>
                     <div className="flex items-center space-x-1 text-orange-500">
                       <Star className="w-3 h-3 fill-current" />
