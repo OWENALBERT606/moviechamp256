@@ -333,7 +333,7 @@ export default async function HomePage() {
             <ComingSoon movies={comingSoonMovies} series={comingSoonSeries} />
           )}
         </div>
-        <Pricing />
+        {/* <Pricing /> */}
       </main>
     </div>
   );

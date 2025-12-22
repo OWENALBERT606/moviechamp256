@@ -1,0 +1,235 @@
+"use client";
+
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Check, Zap, Crown, Star } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+
+const PLANS = [
+  {
+    id: "daily",
+    name: "24 Hours",
+    price: 1500,
+    duration: "1 day",
+    icon: Zap,
+    color: "text-blue-500",
+    features: [
+      "24-hour unlimited access",
+      "Live stream in HD quality",
+      "Unlimited movie downloads",
+      "Access to all movies and series",
+      "Ad-free experience",
+      "Watch on any device"
+    ]
+  },
+  {
+    id: "weekly",
+    name: "Weekly",
+    price: 5000,
+    duration: "7 days",
+    icon: Star,
+    color: "text-purple-500",
+    features: [
+      "7 days unlimited access",
+      "Live stream in HD & Full HD",
+      "Unlimited downloads",
+      "Access to all movies and series",
+      "Ad-free experience",
+      "Watch on up to 2 devices",
+      "Early access to new releases"
+    ]
+  },
+  {
+    id: "monthly",
+    name: "Monthly",
+    price: 15000,
+    duration: "30 days",
+    popular: true,
+    icon: Crown,
+    color: "text-orange-500",
+    features: [
+      "30 days unlimited access",
+      "Live stream in Full HD & 4K",
+      "Unlimited downloads",
+      "Access to all movies and series",
+      "Ad-free experience",
+      "Watch on up to 3 devices",
+      "Early access to new releases",
+      "Offline viewing",
+      "Priority customer support"
+    ]
+  },
+  {
+    id: "quarterly",
+    name: "3 Months",
+    price: 40000,
+    originalPrice: 45000,
+    duration: "90 days",
+    savings: "Save 11,000 UGX",
+    icon: Crown,
+    color: "text-green-500",
+    features: [
+      "90 days unlimited access",
+      "Live stream in Full HD & 4K",
+      "Unlimited downloads",
+      "Access to all movies and series",
+      "Ad-free experience",
+      "Watch on up to 4 devices",
+      "Early access to new releases",
+      "Offline viewing",
+      "Priority customer support",
+      "Exclusive content"
+    ]
+  },
+  {
+    id: "semiannual",
+    name: "6 Months",
+    price: 75000,
+    originalPrice: 90000,
+    duration: "180 days",
+    savings: "Save 15,000 UGX",
+    icon: Crown,
+    color: "text-yellow-500",
+    features: [
+      "180 days unlimited access",
+      "Live stream in Full HD & 4K",
+      "Unlimited downloads",
+      "Access to all movies and series",
+      "Ad-free experience",
+      "Watch on up to 5 devices",
+      "Early access to new releases",
+      "Offline viewing",
+      "Priority customer support",
+      "Exclusive content",
+      "Free 1 month when you renew"
+    ]
+  },
+  {
+    id: "annual",
+    name: "Annual",
+    price: 130000,
+    originalPrice: 180000,
+    duration: "365 days",
+    savings: "Save 50,000 UGX",
+    bestValue: true,
+    icon: Crown,
+    color: "text-red-500",
+    features: [
+      "365 days unlimited access",
+      "Live stream in Full HD & 4K",
+      "Unlimited downloads",
+      "Access to all movies and series",
+      "Ad-free experience",
+      "Watch on unlimited devices",
+      "Early access to new releases",
+      "Offline viewing",
+      "VIP customer support",
+      "Exclusive content",
+      "Free 2 months when you renew",
+      "Special event access",
+      "Gift subscription to a friend"
+    ]
+  }
+];
+
+interface PricingCardsProps {
+  userId?: string;
+}
+
+export function PricingCards({ userId }: PricingCardsProps) {
+  const router = useRouter();
+  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+
+  const handleSubscribe = (planId: string) => {
+    if (!userId) {
+      toast.error("Please login to subscribe");
+      router.push(`/login?redirect=/pricing&plan=${planId}`);
+      return;
+    }
+
+    setSelectedPlan(planId);
+    router.push(`/checkout?plan=${planId}`);
+  };
+
+  return (
+    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+      {PLANS.map((plan) => {
+        const Icon = plan.icon;
+        const isPopular = plan.popular;
+        const isBestValue = plan.bestValue;
+
+        return (
+          <Card
+            key={plan.id}
+            className={`relative p-6 ${
+              isPopular || isBestValue
+                ? "border-2 border-orange-500 shadow-lg shadow-orange-500/20"
+                : ""
+            }`}
+          >
+            {/* Badge */}
+            {isPopular && (
+              <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-orange-500">
+                Most Popular
+              </Badge>
+            )}
+            {isBestValue && (
+              <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-orange-500 to-red-500">
+                Best Value
+              </Badge>
+            )}
+
+            {/* Header */}
+            <div className="text-center mb-6">
+              <Icon className={`w-12 h-12 mx-auto mb-3 ${plan.color}`} />
+              <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
+              <div className="mb-2">
+                {plan.originalPrice && (
+                  <span className="text-muted-foreground line-through text-sm mr-2">
+                    {plan.originalPrice.toLocaleString()} UGX
+                  </span>
+                )}
+                <span className="text-4xl font-bold">
+                  {plan.price.toLocaleString()}
+                </span>
+                <span className="text-muted-foreground"> UGX</span>
+              </div>
+              <p className="text-muted-foreground text-sm">{plan.duration}</p>
+              {plan.savings && (
+                <p className="text-green-500 text-sm font-semibold mt-1">
+                  {plan.savings}
+                </p>
+              )}
+            </div>
+
+            {/* Features */}
+            <ul className="space-y-3 mb-6">
+              {plan.features.map((feature, index) => (
+                <li key={index} className="flex items-start gap-2">
+                  <Check className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                  <span className="text-sm">{feature}</span>
+                </li>
+              ))}
+            </ul>
+
+            {/* CTA Button */}
+            <Button
+              className={`w-full ${
+                isPopular || isBestValue
+                  ? "bg-orange-500 hover:bg-orange-600"
+                  : ""
+              }`}
+              onClick={() => handleSubscribe(plan.id)}
+              disabled={selectedPlan === plan.id}
+            >
+              {selectedPlan === plan.id ? "Processing..." : "Subscribe Now"}
+            </Button>
+          </Card>
+        );
+      })}
+    </div>
+  );
+}

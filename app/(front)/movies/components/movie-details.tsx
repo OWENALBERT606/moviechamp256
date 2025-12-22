@@ -1,15 +1,19 @@
+
+
 // "use client";
 
-// import { Star, Plus, Share2, Download, Eye, HardDrive, Clock, Calendar } from "lucide-react";
+// import { Star, Share2, Download, Eye, HardDrive, Clock, Calendar } from "lucide-react";
 // import { Button } from "@/components/ui/button";
 // import { Badge } from "@/components/ui/badge";
 // import type { Movie } from "@/actions/movies";
+// import { AddToListButton } from "./add-to-list-button";
 
 // interface MovieDetailsProps {
 //   movie: Movie;
+//   userId?: string; // Add userId prop
 // }
 
-// export function MovieDetails({ movie }: MovieDetailsProps) {
+// export function MovieDetails({ movie, userId }: MovieDetailsProps) {
 //   const viewsCount = Number(movie.viewsCount || 0);
 
 //   return (
@@ -35,10 +39,14 @@
 
 //       {/* Action Buttons */}
 //       <div className="flex flex-wrap items-center gap-3">
-//         <Button className="bg-orange-500 hover:bg-orange-600 text-white">
-//           <Plus className="w-5 h-5 mr-2" />
-//           Add to List
-//         </Button>
+//         {/* ✅ Replace with AddToListButton */}
+//         <AddToListButton
+//           itemId={movie.id}
+//           type="movie"
+//           userId={userId}
+//           className="bg-orange-500 hover:bg-orange-600 text-white"
+//         />
+        
 //         <Button variant="outline" className="border-gray-700 bg-gray-900/50 hover:bg-gray-800">
 //           <Share2 className="w-5 h-5 mr-2" />
 //           Share
@@ -102,21 +110,72 @@
 // }
 
 
+
 "use client";
 
 import { Star, Share2, Download, Eye, HardDrive, Clock, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
 import type { Movie } from "@/actions/movies";
 import { AddToListButton } from "./add-to-list-button";
 
 interface MovieDetailsProps {
   movie: Movie;
-  userId?: string; // Add userId prop
+  userId?: string;
 }
 
 export function MovieDetails({ movie, userId }: MovieDetailsProps) {
   const viewsCount = Number(movie.viewsCount || 0);
+
+  const handleDownload = () => {
+    if (!movie.videoUrl) {
+      toast.error("Download link not available");
+      return;
+    }
+
+    // Create a temporary anchor element to trigger download
+    const link = document.createElement("a");
+    link.href = movie.videoUrl;
+    link.download = `${movie.title}.mp4`; // Set the filename
+    link.target = "_blank"; // Open in new tab if download fails
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    toast.success("Download started", {
+      description: `${movie.title} is being downloaded`,
+    });
+  };
+
+  const handleShare = async () => {
+    const shareUrl = `${window.location.origin}/movies/${movie.slug}`;
+    
+    if (navigator.share) {
+      // Use native share if available (mobile)
+      try {
+        await navigator.share({
+          title: movie.title,
+          text: `Check out ${movie.title} on MovieChamp256`,
+          url: shareUrl,
+        });
+        toast.success("Shared successfully");
+      } catch (error) {
+        // User cancelled share
+        console.log("Share cancelled");
+      }
+    } else {
+      // Fallback: copy to clipboard
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        toast.success("Link copied to clipboard", {
+          description: "Share this link with your friends",
+        });
+      } catch (error) {
+        toast.error("Failed to copy link");
+      }
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -141,7 +200,7 @@ export function MovieDetails({ movie, userId }: MovieDetailsProps) {
 
       {/* Action Buttons */}
       <div className="flex flex-wrap items-center gap-3">
-        {/* ✅ Replace with AddToListButton */}
+        {/* Add to List Button */}
         <AddToListButton
           itemId={movie.id}
           type="movie"
@@ -149,11 +208,22 @@ export function MovieDetails({ movie, userId }: MovieDetailsProps) {
           className="bg-orange-500 hover:bg-orange-600 text-white"
         />
         
-        <Button variant="outline" className="border-gray-700 bg-gray-900/50 hover:bg-gray-800">
+        {/* Share Button */}
+        <Button 
+          variant="outline" 
+          className="border-gray-700 bg-gray-900/50 hover:bg-gray-800"
+          onClick={handleShare}
+        >
           <Share2 className="w-5 h-5 mr-2" />
           Share
         </Button>
-        <Button variant="outline" className="border-gray-700 bg-gray-900/50 hover:bg-gray-800">
+
+        {/* Download Button */}
+        <Button 
+          variant="outline" 
+          className="border-gray-700 bg-gray-900/50 hover:bg-gray-800"
+          onClick={handleDownload}
+        >
           <Download className="w-5 h-5 mr-2" />
           Download
         </Button>
@@ -206,6 +276,33 @@ export function MovieDetails({ movie, userId }: MovieDetailsProps) {
         <p className="text-gray-300 leading-relaxed">
           {movie.description || "No description available."}
         </p>
+      </div>
+
+      {/* Additional Info */}
+      <div className="grid md:grid-cols-2 gap-6">
+        {/* Director */}
+        {movie.director && (
+          <div>
+            <h3 className="text-lg font-semibold mb-2 text-gray-400">Director</h3>
+            <p className="text-white">{movie.director}</p>
+          </div>
+        )}
+
+        {/* Cast */}
+        {movie.cast && movie.cast.length > 0 && (
+          <div>
+            <h3 className="text-lg font-semibold mb-2 text-gray-400">Cast</h3>
+            <p className="text-white">{movie.cast.join(", ")}</p>
+          </div>
+        )}
+
+        {/* VJ */}
+        {movie.vj && (
+          <div>
+            <h3 className="text-lg font-semibold mb-2 text-gray-400">VJ</h3>
+            <p className="text-white">{movie.vj.name}</p>
+          </div>
+        )}
       </div>
     </div>
   );
