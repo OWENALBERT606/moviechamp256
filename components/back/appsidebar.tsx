@@ -320,6 +320,7 @@ import {
   UserCog,
   Tag,
   Calendar,
+  DollarSign,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -380,9 +381,9 @@ export default function AppSidebar({user}:{user:any}) {
       icon: Users,
     },
     {
-      title: "Storage",
-      url: "/dashboard/storage",
-      icon: Folder,
+      title: "Payments",
+      url: "/dashboard/payments",
+      icon: DollarSign,
     },
     {
       title: "Settings",
