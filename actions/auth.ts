@@ -637,23 +637,6 @@ export async function createUser(data: any) {
   }
 }
 
-// export async function verifyEmailAction(params: { email: string; token: string }) {
-//   try {
-//     await api.post("/auth/verify-email", params);
-//     return { success: true };
-//   } catch (e: any) {
-//     return { success: false, error: e?.response?.data?.error || "Verification failed." };
-//   }
-// }
-
-// export async function resendVerificationAction(email: string) {
-//   try {
-//     await api.post("/auth/resend-verification", { email });
-//     return { success: true };
-//   } catch {
-//     return { success: true }; // don't leak
-//   }
-// }
 
 export async function deleteUser(userId: string) {
   try {
@@ -668,16 +651,6 @@ export async function deleteUser(userId: string) {
   }
 }
 
-// export async function fetchMe() {
-//   try {
-//     const headers = await getAuthHeaderFromCookies();
-//     const res = await api.get("/me", { headers });
-//     return res.data;
-//   } catch (error) {
-//     console.error("fetchMe error:", error);
-//     return null;
-//   }
-// }
 
 
 

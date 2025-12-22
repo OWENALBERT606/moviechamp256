@@ -272,7 +272,7 @@ export function MoviePlayer({ movie, userId, initialProgress = 0 }: MoviePlayerP
 
   return (
     <div
-      className="relative bg-black aspect-video w-full max-h-[80vh]"
+      className="relative md:mt-24 bg-black aspect-video w-full max-h-[80vh]"
       onMouseMove={handleMouseMove}
       onMouseLeave={() => isPlaying && setShowControls(false)}
     >
