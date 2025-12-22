@@ -196,12 +196,12 @@ export default async function HomePage() {
     comingSoonSeriesData,
     allSeriesData,
   ] = await Promise.all([
-    getTrendingMovies(10),
-    getComingSoonMovies(10),
-    listMovies({ limit: 50 }),
-    getTrendingSeries(10),
-    getComingSoonSeries(10),
-    listSeries({ limit: 50 }),
+    getTrendingMovies(6),
+    getComingSoonMovies(6),
+    listMovies({ limit: 6 }),
+    getTrendingSeries(6),
+    getComingSoonSeries(6),
+    listSeries({ limit: 6 }),
   ]);
 
   // Extract movie data
