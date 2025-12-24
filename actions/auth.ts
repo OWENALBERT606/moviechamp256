@@ -623,17 +623,47 @@ export async function getAllUsers() {
   }
 }
 
+// export async function createUser(data: any) {
+//   try {
+//     const res = await api.post("/register", data);
+//     revalidatePath("/dashboard/users");
+//     return res.data;
+//   } catch (error: any) {
+//     if (axios.isAxiosError(error)) {
+//       const message = error.response?.data?.message || "Failed to create user";
+//       throw new Error(message);
+//     }
+//     throw error;
+//   }
+// }
+
+
 export async function createUser(data: any) {
   try {
+    console.log("📝 Creating user:", data.email);
+    
     const res = await api.post("/register", data);
+    
+    console.log("✅ User created successfully");
+    
     revalidatePath("/dashboard/users");
-    return res.data;
+    
+    // ✅ Return only serializable data (no Axios response objects)
+    return {
+      success: true,
+      data: res.data?.data, // Extract the actual user data
+      error: null,
+    };
   } catch (error: any) {
-    if (axios.isAxiosError(error)) {
-      const message = error.response?.data?.message || "Failed to create user";
-      throw new Error(message);
-    }
-    throw error;
+    console.error("❌ Error creating user:", error?.response?.data || error?.message);
+    
+    // ✅ Don't throw - return serializable error object instead
+    return {
+      success: false,
+      data: null,
+      // Check both .error and .message fields from backend
+      error: error?.response?.data?.error || error?.response?.data?.message || "Failed to create user",
+    };
   }
 }
 
