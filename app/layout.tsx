@@ -1,53 +1,3 @@
-// import type { Metadata } from "next";
-// import { Geist, Geist_Mono } from "next/font/google";
-// import "./globals.css";
-// import { Toaster } from "sonner";
-// import { Header } from "@/components/front-end/header";
-// import { Footer } from "@/components/front-end/footer";
-
-
-
-// const geistSans = Geist({
-//   variable: "--font-geist-sans",
-//   subsets: ["latin"],
-// });
-
-// const geistMono = Geist_Mono({
-//   variable: "--font-geist-mono",
-//   subsets: ["latin"],
-// });
-
-// export const metadata: Metadata = {
-//   title: "School-Guru",
-//   description: "School Management System",
-// };
-
-// export default function RootLayout({
-//   children,
-// }: Readonly<{
-//   children: React.ReactNode;
-// }>) {
-//   return (
-//     <html lang="en">
-//       <body
-//         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-//       >
-//          {/* <NextSSRPlugin
-//           routerConfig={extractRouterConfig(ourFileRouter)}
-//         /> */}
-//         <Toaster 
-// />
-// <Header/>
-//         {children}
-//         <Footer/>
-//       </body>
-
-//     </html>
-//   );
-// }
-
-// "use client"
-
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -57,15 +7,15 @@ const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "MovieChamp256",
-  description: "Movie streaming, reviews, and recommendations platform",
+  title: "FlickerPlay | Every frame, your way.",
+  description: "The ultimate movie streaming platform for high-quality cinema, reviews, and personalized recommendations.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <Toaster />
+        <Toaster position="top-center" richColors />
         {children}
       </body>
     </html>

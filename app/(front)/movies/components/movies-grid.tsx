@@ -180,7 +180,6 @@ export function MovieGrid({ movies,userId }: MovieGridProps) {
                 fill 
                 className={`object-cover rounded-lg ${movie.isComingSoon ? "grayscale group-hover:grayscale-0" : ""}`}
               />
-
               {/* Gradient Overlay (Always visible at bottom) */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent rounded-lg pointer-events-none" />
 
